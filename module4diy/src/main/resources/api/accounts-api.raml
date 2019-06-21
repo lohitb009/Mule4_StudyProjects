@@ -1,0 +1,203 @@
+#%RAML 1.0
+version: v1
+title: Accounts API
+
+types:
+  Accounts:
+    !include accounts_modules/accounts-data-types/AccountDataType.raml
+  AccountsAgain:
+    !include accounts_modules/accounts-data-types/AccountDataTypeAgain.raml
+    
+/accounts:
+  get:
+    description: Account Information on the basis of given query params
+    headers:
+      Requester-ID:
+        description: identify person making account requests
+        required: true
+
+    queryParameters:
+      
+      type:
+        required: true
+        enum: 
+          - personal
+          - business
+        description: to return records that return account's type
+
+      name:
+        required: false
+        description: filter out records matching particular account owner
+        type: string
+
+      country:
+        required: false
+        description: filter out records matching account owner's country of residence
+        type: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: Accounts[]
+            example:
+              [
+                {
+                "id":"1001",
+                "firstName":"Srishti",
+                "lastName":"Jain",
+                "address":"Mayur",
+                "postal":"201301",
+                "country":"India",
+                "miles":1000,
+                "creationDate":"2012-04-23T18:25:43.511Z",
+                "type":"personal"
+                },
+                {
+                "id":"1002",
+                "firstName":"Ravi",
+                "lastName":"Jain",
+                "address":"Noida",
+                "postal":"201301",
+                "country":"India",
+                "miles":1000,
+                "creationDate":"2012-04-23T18:25:43.511Z",
+                "type":"business"
+                }
+
+              ]
+            
+      400:
+        body:
+          application/json:
+            example:
+              message: Error to get data
+
+  post:
+    body:
+      application/json:
+        type: AccountsAgain[]
+        description: accepts accounts object i.e posting
+        example:
+          !include accounts_modules/accounts-example/AccountsAgain.json
+
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              message: Accounts Added (But Not Really)!!!      
+
+      400:
+        body:
+          application/json:
+            example:
+              message: Error to post data
+         
+  /{id}:
+    get:
+      description: Account Information on the basis of given query params
+      headers:
+        Requester-ID:
+          description: identify person making account requests
+          required: true
+
+      queryParameters:
+        
+        type:
+          required: false
+          enum: 
+            - personal
+            - business
+          description: to return records that return account's type
+  
+        name: 
+          required: false
+          description: filter out records matching particular account owner
+          type: string
+  
+        country:
+          required: false
+          description: filter out records matching account owner's country of residence
+          type: string
+      responses:
+        200:
+          body:
+            application/json:
+              type: Accounts[]
+              example:
+                [
+                  {
+                  "id":"1001",
+                  "firstName":"Srishti",
+                  "lastName":"Jain",
+                  "address":"Mayur",
+                  "postal":"201301",
+                  "country":"India",
+                  "miles":1000,
+                  "creationDate":"2012-04-23T18:25:43.511Z",
+                  "type":"personal"
+                  },
+                  {
+                  "id":"1002",
+                  "firstName":"Ravi",
+                  "lastName":"Jain",
+                  "address":"Noida",
+                  "postal":"201301",
+                  "country":"India",
+                  "miles":1000,
+                  "creationDate":"2012-04-23T18:25:43.511Z",
+                  "type":"business"
+                  }
+  
+                ]
+              
+        400:
+          body:
+            application/json:
+              example:
+                message: Error to get data
+    
+    put:
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                message: account replaced (but not really)!!!
+        400:
+          body:
+            application/json:
+              example:
+                message: Error to put data
+
+    patch:
+      responses:
+        201:
+          body:
+            application/json:
+              example:
+                message: account modified (but not really)!!!
+        400:
+          body:
+            application/json:
+              example:
+                message: Error to patch data
+
+    delete:
+      responses:
+        201:
+          body:
+            application/json:
+              example:
+                message: account deleted (but not really)!!!
+
+        400:
+          body:
+            application/json:
+              example:
+                message: Error to delete data
+         
+                 
+                
+             
+  

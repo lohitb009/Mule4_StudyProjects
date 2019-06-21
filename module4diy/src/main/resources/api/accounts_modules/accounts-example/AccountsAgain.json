@@ -1,0 +1,18 @@
+[
+  {
+    "firstName":"Raja",
+    "lastName":"Beta",  "address":"Noida",
+    "postal":201301,
+    "country":"India",
+    "miles":200,
+    "type":10101
+  },
+  {
+    "firstName":"Somansh",
+    "lastName":"Aubameyang",  "address":"Mayur",
+    "postal":201302,
+    "country":"India",
+    "miles":203,
+    "type":10102
+  }
+]
