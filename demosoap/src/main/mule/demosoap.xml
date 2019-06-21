@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="bcc06395-23be-44f3-924f-f575247e35fe" >
+		<http:listener-connection host="0.0.0.0" port="8090" />
+	</http:listener-config>
+	<apikit-soap:config name="APIKit_for_SOAP_Configuration" service="Hello_Service" port="Hello_Port" doc:name="APIKit for SOAP Configuration" doc:id="e479a0bd-770d-4e2b-89e7-abdd58419d1f" wsdlLocation="api/tshirt2.wsdl" />
+	<flow name="demosoapFlow" doc:id="a7386ab7-491f-4aad-9cbf-ca0fb6cf5fd4" >
+		<http:listener doc:name="Listener" doc:id="cd629014-fc43-4103-a38f-c48309fde035" config-ref="HTTP_Listener_config" path="/testSoap"/>
+		<logger level="INFO" doc:name="Logger" doc:id="7d7b0710-1759-4de5-82bc-165f5c3d2fb9" message="#[payload]"/>
+		<apikit-soap:router doc:name="SOAP Router" doc:id="99c4e0cf-2c57-4fba-8e41-ca1452e65a23" config-ref="APIKit_for_SOAP_Configuration">
+			<apikit-soap:attributes ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	headers: attributes.headers,
+	method: attributes.method,
+	queryString: attributes.queryString
+}]]]></apikit-soap:attributes>
+		</apikit-soap:router>
+		<logger level="INFO" doc:name="Logger" doc:id="4ae11eab-35df-4015-b214-6d0243795b1d" message="#[payload]"/>
+	</flow>
+</mule>

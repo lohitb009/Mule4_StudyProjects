@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="4620d070-a1f8-4126-8d17-94cc9c8386e8" >
+		<wsc:connection wsdlLocation="http://mu.learn.mulesoft.com/delta?wsdl" service="TicketServiceService" port="TicketServicePort" address="http://mu.learn.mulesoft.com/delta" />
+	</wsc:config>
+	<flow name="soap2Flow" doc:id="c3fcadf6-7fcb-4a45-8046-809bb3ee9f16" >
+		<http:listener doc:name="Listener" doc:id="5149fcbc-b119-4382-b81b-2f1895d14772" config-ref="HTTP_Listener_config" path="/testSoapDemoNew"/>
+		<wsc:consume doc:id="14e9687d-f9ae-4913-8b1c-2a4a29db1f16" doc:name="GET Flights" config-ref="Web_Service_Consumer_Config" operation="listAllFlights"/>
+		<logger level="INFO" doc:name="Logger" doc:id="77952eab-fd2b-4519-96e3-265e2992a684" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="97b79952-f50d-4652-8aa0-3d463e15bd70" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[{
+	flightsDetails:payload
+}]	
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Copy_of_soap2Flow" doc:id="f5ffd798-aeb6-4ddd-842a-ac1905970fc5" >
+		<http:listener doc:name="Copy_of_Listener" doc:id="382985ea-3d25-494a-825b-4ce3ce74d6e6" config-ref="HTTP_Listener_config" path="/testSoapDemoNewTwo" />
+		<wsc:consume operation="listAllFlights" doc:name="Copy_of_GET Flights" doc:id="fd82c2be-3da4-41a3-aa03-0a72dfe18dc1" config-ref="Web_Service_Consumer_Config" />
+	</flow>
+</mule>
