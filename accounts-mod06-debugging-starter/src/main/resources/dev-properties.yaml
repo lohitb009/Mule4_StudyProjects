@@ -1,0 +1,13 @@
+http:
+  port: "8085"
+
+# Using in-memory DB
+
+db:
+  host: "0.0.0.0"
+  port: "3306"
+  user: "mule"
+  password: "mule"
+  database: "training"
+  tableName: "flights_customers"
+  
