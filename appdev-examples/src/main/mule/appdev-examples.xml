@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6b380a61-c803-4b3d-8c5a-2e79401ae296" >
 		<http:listener-connection host="0.0.0.0" port="8090" />
 	</http:listener-config>
 	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="c7a080af-3f03-4398-a8d4-b54303a430a9" >
 		<http:request-connection host="localhost" port="8090" />
 	</http:request-config>
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="ac662e8a-ca97-4604-b19f-dc96a0d9d066">
+		<vm:queues >
+			<vm:queue queueName="goodbye" />
+		</vm:queues>
+	</vm:config>
 	<flow name="privateFlow" doc:id="8541b5a4-636d-46ab-854b-e2b6c7e33bbe" >
 		<http:request method="GET" doc:name="GET/goodbye" doc:id="fd310f1b-6cb6-463f-b07f-ba91313e8a64" config-ref="HTTP_Request_configuration" path="/goodbye" responseTimeout="300000">
 			<http:query-params><![CDATA[#[output application/java
@@ -30,16 +36,16 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			</http:response>
 		</http:listener>
 		<flow-ref doc:name="subFlow" doc:id="9115e537-765e-40b9-a0a5-369ffb781de8" name="subFlow"/>
-		<flow-ref doc:name="privateFlow" doc:id="6228487b-1600-4898-a362-d69d65e32c05" name="privateFlow" />
-		<logger level="INFO" doc:name="Payload" doc:id="a492f968-d703-49a2-be70-b1c67a724196" message="#[payload]"/>
+		<vm:publish queueName="goodbye" doc:name="VM goodbye" doc:id="71af3615-1143-4f87-85a7-5b82b84796dd" config-ref="VM_Config" sendCorrelationId="NEVER"/>
+		<logger level="INFO" doc:name="Payload" doc:id="a492f968-d703-49a2-be70-b1c67a724196" message='#[payload]'/>
 	</flow>
 	<sub-flow name="subFlow" doc:id="bbee891c-2188-42b9-abf0-f1e07f8c251f" >
-		<set-variable value="attributes.queryParams.fname" doc:name="firstName" doc:id="fc613729-515f-47cc-968e-30cd0914a75d" variableName="firstName"/>
+		<set-variable value="#[message.attributes.queryParams.fname]" doc:name="firstName" doc:id="fc613729-515f-47cc-968e-30cd0914a75d" variableName="firstName"/>
 		<set-payload value='#["Hello"]' doc:name="Hello" doc:id="a50a5bbb-2405-4e64-98fd-21bf861b8ea4" />
 	</sub-flow>
 	<flow name="goodbyeflow" doc:id="b3ced737-4fba-4263-8c7a-58f95ccb9443" >
-		<http:listener doc:name="GET/goodbye" doc:id="142fb2fd-1b09-4041-af9f-03215fbb0bf6" config-ref="HTTP_Listener_config" path="/goodbye" allowedMethods="GET"/>
-		<set-payload value="#[attributes.queryParams.fullName]" doc:name="Goodbye" doc:id="2260059b-01df-4562-8289-b08200e65256" />
-		<logger level="INFO" doc:name="fullName" doc:id="e89c020c-2714-4f11-ad95-d2d42e4f6f43" message="#[attributes.queryParams.fullName]"/>
+		<vm:listener queueName="goodbye" doc:name="VM goodbye" doc:id="e64a64a4-8bea-4cbb-950c-0fcae14614d0" config-ref="VM_Config"/>
+		<set-payload doc:name="Goodbye" doc:id="2260059b-01df-4562-8289-b08200e65256" value="#[attributes.queryParams.fullName]"/>
+		<logger level="WARN" doc:name="fullName" doc:id="e89c020c-2714-4f11-ad95-d2d42e4f6f43" message='#["GOODBYE!! "++ (attributes.queryParams.fullName default "Senna")]'/>
 	</flow>
 </mule>
