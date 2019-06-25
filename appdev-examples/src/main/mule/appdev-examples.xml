@@ -5,17 +5,6 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6b380a61-c803-4b3d-8c5a-2e79401ae296" >
-		<http:listener-connection host="0.0.0.0" port="8090" />
-	</http:listener-config>
-	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="c7a080af-3f03-4398-a8d4-b54303a430a9" >
-		<http:request-connection host="localhost" port="8090" />
-	</http:request-config>
-	<vm:config name="VM_Config" doc:name="VM Config" doc:id="ac662e8a-ca97-4604-b19f-dc96a0d9d066">
-		<vm:queues >
-			<vm:queue queueName="goodbye" />
-		</vm:queues>
-	</vm:config>
 	<flow name="privateFlow" doc:id="8541b5a4-636d-46ab-854b-e2b6c7e33bbe" >
 		<http:request method="GET" doc:name="GET/goodbye" doc:id="fd310f1b-6cb6-463f-b07f-ba91313e8a64" config-ref="HTTP_Request_configuration" path="/goodbye" responseTimeout="300000">
 			<http:query-params><![CDATA[#[output application/java
