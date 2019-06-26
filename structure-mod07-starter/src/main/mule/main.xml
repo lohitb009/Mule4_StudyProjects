@@ -14,6 +14,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<flow name="initialize" doc:id="304b28bc-0558-4593-aebe-004ab8d04b8c" >
 		<http:listener doc:name="HTTP: GET /flights" doc:id="6d185fbd-aa8a-4c51-81b3-15b0f97f638a" config-ref="HTTP_Listener_config" path="/flights"/>
 		<set-variable value="#[attributes.queryParams.destination]" doc:name="destination" doc:id="69ed4dd8-a3af-48f8-ace3-9905083273c8" variableName="destination"/>
+		<set-variable value="#[attributes.headers.'requester-id']" doc:name="Requester ID" doc:id="993b59b8-a51c-4f05-81f0-e6d64076b3b7" variableName="requesterId"/>
 		<http:request method="GET" doc:name="GET/american/{destination}" doc:id="40bc9b1a-3f8b-4e44-843f-6daf3c554e8a" config-ref="HTTP_Request_configuration" path="/american/{destination}">
 			<http:uri-params ><![CDATA[#[output application/java
 ---
@@ -28,7 +29,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     &quot;payload-GET&quot;: vars.'payload-GET',
 	&quot;payload-PROCESS&quot;: payload,
     &quot;destination-process&quot;: vars.destination,
-    &quot;requesterID-process&quot;: attributes.headers.'requester-id'
+    &quot;requesterID-process&quot;: vars.requesterId
 }]" doc:name="final summary" doc:id="68c44115-a04b-420b-8fe9-aa83f6d5c305" />
 	</flow>
 	<flow name="mockData" doc:id="578be7bc-ce05-493e-9385-ef388dbcc6b8" >
@@ -105,7 +106,7 @@ output application/json
 		}
 	),
     destination: vars.destination,
-    requesterID: attributes.headers.'requester-id',
+    requesterID: vars.requesterId,
     date: attributes.headers.'date'
 }
 ]]></ee:set-payload>
